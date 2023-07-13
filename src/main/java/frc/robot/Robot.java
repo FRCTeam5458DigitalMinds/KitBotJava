@@ -29,10 +29,15 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.*;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.motorcontrol.*;
+import com.revrobotics.REVLibError;
+
+ 
 
 public class Robot extends TimedRobot {
 
-  private DifferentialDrive driver1;
+  private DifferentialDrive m_roboDrive;
 
   private Command m_autonomousCommand;
 
@@ -53,34 +58,70 @@ public class Robot extends TimedRobot {
   Double BackLeftEncoder = 0.0;
   Double BackRightEncoder = 0.0;
   
+  Double rightMotors; 
+  Double leftMotors; 
+
   Double Speed; 
+
+  private final MotorControllerGroup rightGroup = new MotorControllerGroup(FrontRightMotor, BackRightMotor); 
+  private final MotorControllerGroup leftGroup = new MotorControllerGroup(FrontLeftMotor, BackLeftMotor); 
+
+  private final DifferentialDrive m_robotDrive = new DifferentialDrive(FrontLeftMotor, FrontRightMotor);
+  private final DifferentialDrive robotDrive = new DifferentialDrive(BackLeftMotor, BackRightMotor);
+  //private final DifferentialDrive m_robotDrive = new DifferentialDrive(FrontLeftMotor, BackLeftMotor);
+  //private final DifferentialDrive robotDrive = new DifferentialDrive(FrontRightMotor, BackRightMotor);  
+  private final XboxController m_driverController = new XboxController(0);
+  Joystick xboxcontoller = new Joystick(0);
   
   
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    FrontLeftMotor.setInverted(true);
-    FrontRightMotor.setInverted(true);
-    BackRightMotor.setInverted(true); 
-    BackLeftMotor.setInverted(true); 
 
+    BackLeftMotor.follow(FrontLeftMotor);  
+    BackRightMotor.follow(FrontRightMotor);
+
+    
     FrontLeftMotor.restoreFactoryDefaults();
     BackLeftMotor.restoreFactoryDefaults(); 
     FrontRightMotor.restoreFactoryDefaults();
     BackRightMotor.restoreFactoryDefaults();
+
+    FrontLeftMotor.setInverted(false);
+    FrontRightMotor.setInverted(false); 
+    //BackRightMotor.setInverted(false); 
+    //BackLeftMotor.setInverted(true); 
+
+    //FrontLeftMotor.restoreFactoryDefaults();
+    //BackLeftMotor.restoreFactoryDefaults(); 
+    //FrontRightMotor.restoreFactoryDefaults();
+    //BackRightMotor.restoreFactoryDefaults();
+
+    FrontLeftMotor.setSmartCurrentLimit(80);
+    FrontRightMotor.setSmartCurrentLimit(80); 
+    BackLeftMotor.setSmartCurrentLimit(80); 
+    BackRightMotor.setSmartCurrentLimit(80); 
 
     FrontLeftMotor.setOpenLoopRampRate(3);
     BackLeftMotor.setOpenLoopRampRate(3);
     FrontRightMotor.setOpenLoopRampRate(3);
     BackRightMotor.setOpenLoopRampRate(3);
     
-    FrontLeftMotor.setIdleMode(IdleMode.kBrake);
-    BackLeftMotor.setIdleMode(IdleMode.kBrake);
-    FrontRightMotor.setIdleMode(IdleMode.kBrake);
-    BackRightMotor.setIdleMode(IdleMode.kBrake);
+    //FrontLeftMotor.setIdleMode(IdleMode.kBrake);
+    //BackLeftMotor.setIdleMode(IdleMode.kBrake);
+    //FrontRightMotor.setIdleMode(IdleMode.kBrake);
+    //BackRightMotor.setIdleMode(IdleMode.kBrake);
 
-    //BackRightMotor.follow(FrontRightMotor);
-    //BackLeftMotor.follow(FrontLeftMotor); 
+    
+
+                                                              // sets the left follower motors
+    
+
+
+
+   //leftMotors = new SpeedControllerGroup(FrontLeftMotor, BackLeftMotor);
+   // rightMotors = new SpeedControllerGroup(FrontRightMotor, BackRightMotor);
+
   }
 
  
@@ -112,21 +153,34 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    //driver1 = new DifferentialDrive(FrontLeftMotor, FrontRightMotor);
+
+    FrontLeftMotor.setIdleMode(IdleMode.kCoast); 
+    FrontRightMotor.setIdleMode(IdleMode.kCoast); 
+    BackLeftMotor.setIdleMode(IdleMode.kCoast); 
+    BackRightMotor.setIdleMode(IdleMode.kCoast);
+    
+    //leftMotors = new SpeedControllerGroup(FrontLeftMotor, BackLeftMotor);
+    //rightMotors = new SpeedControllerGroup(FrontRightMotor, BackRightMotor);
+
+   //driver1 = new DifferentialDrive(FrontLeftMotor, FrontRightMotor);
   }
 
   @Override
   public void teleopPeriodic() {
-    j1y = joy1.getRawAxis(1);
-    j2y = joy2.getRawAxis(1);
-    
-    FrontRightMotor.set(j1y);
-    FrontLeftMotor.set(j2y);
 
-    //driver1.tankDrive(j1y, j2y);
+     
+     
+    robotDrive.tankDrive(-m_driverController.getLeftY(), -m_driverController.getRightX());
+    m_robotDrive.tankDrive(m_driverController.getLeftY(), m_driverController.getRightX()); 
+     
+    //m_robotDrive.arcadeDrive(-m_driverController.getLeftY(), -m_driverController.getRightX());
+    //robotDrive.arcadeDrive(m_driverController.getLeftY(), m_driverController.getRightX());
+   
+
+
 
   }
-
+  //change
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
