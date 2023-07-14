@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.motorcontrol.*;
 import com.revrobotics.REVLibError;
 
+
  
 
 public class Robot extends TimedRobot {
@@ -66,8 +67,8 @@ public class Robot extends TimedRobot {
   private final MotorControllerGroup rightGroup = new MotorControllerGroup(FrontRightMotor, BackRightMotor); 
   private final MotorControllerGroup leftGroup = new MotorControllerGroup(FrontLeftMotor, BackLeftMotor); 
 
-  private final DifferentialDrive m_robotDrive = new DifferentialDrive(FrontLeftMotor, FrontRightMotor);
-  private final DifferentialDrive robotDrive = new DifferentialDrive(BackLeftMotor, BackRightMotor);
+  private final DifferentialDrive m_robotDrive = new DifferentialDrive(BackRightMotor, FrontLeftMotor);
+  private final DifferentialDrive robotDrive = new DifferentialDrive(FrontRightMotor, BackLeftMotor);
   //private final DifferentialDrive m_robotDrive = new DifferentialDrive(FrontLeftMotor, BackLeftMotor);
   //private final DifferentialDrive robotDrive = new DifferentialDrive(FrontRightMotor, BackRightMotor);  
   private final XboxController m_driverController = new XboxController(0);
@@ -81,6 +82,7 @@ public class Robot extends TimedRobot {
     BackLeftMotor.follow(FrontLeftMotor);  
     BackRightMotor.follow(FrontRightMotor);
 
+   
     
     FrontLeftMotor.restoreFactoryDefaults();
     BackLeftMotor.restoreFactoryDefaults(); 
@@ -88,7 +90,7 @@ public class Robot extends TimedRobot {
     BackRightMotor.restoreFactoryDefaults();
 
     FrontLeftMotor.setInverted(false);
-    FrontRightMotor.setInverted(false); 
+    FrontRightMotor.setInverted(true); 
     //BackRightMotor.setInverted(false); 
     //BackLeftMotor.setInverted(true); 
 
@@ -102,10 +104,10 @@ public class Robot extends TimedRobot {
     BackLeftMotor.setSmartCurrentLimit(80); 
     BackRightMotor.setSmartCurrentLimit(80); 
 
-    FrontLeftMotor.setOpenLoopRampRate(3);
-    BackLeftMotor.setOpenLoopRampRate(3);
-    FrontRightMotor.setOpenLoopRampRate(3);
-    BackRightMotor.setOpenLoopRampRate(3);
+    //FrontLeftMotor.setOpenLoopRampRate(3);
+    //BackLeftMotor.setOpenLoopRampRate(3);
+    //FrontRightMotor.setOpenLoopRampRate(3);
+    //BackRightMotor.setOpenLoopRampRate(3);
     
     //FrontLeftMotor.setIdleMode(IdleMode.kBrake);
     //BackLeftMotor.setIdleMode(IdleMode.kBrake);
@@ -170,11 +172,11 @@ public class Robot extends TimedRobot {
 
      
      
-    robotDrive.tankDrive(-m_driverController.getLeftY(), -m_driverController.getRightX());
-    m_robotDrive.tankDrive(m_driverController.getLeftY(), m_driverController.getRightX()); 
+    robotDrive.tankDrive(m_driverController.getRightY(), -m_driverController.getLeftY());
+    m_robotDrive.tankDrive(m_driverController.getRightY(), -m_driverController.getLeftY()); 
      
-    //m_robotDrive.arcadeDrive(-m_driverController.getLeftY(), -m_driverController.getRightX());
-    //robotDrive.arcadeDrive(m_driverController.getLeftY(), m_driverController.getRightX());
+    //m_robotDrive.arcadeDrive(m_driverController.getLeftY(), m_driverController.getRightX());
+    //robotDrive.arcadeDrive(-m_driverController.getLeftY(), -m_driverController.getRightX());
    
 
 
